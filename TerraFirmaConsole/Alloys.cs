@@ -8,7 +8,7 @@ namespace TerraFirmaConsole
     public class Alloys : ITabs
     {
         private readonly Dictionary<string, Action> _alloysDictionary;
-        private static short _isCorrect;
+        private short _isCorrect;
 
         public Alloys()
         {
@@ -50,13 +50,15 @@ namespace TerraFirmaConsole
                 
                 if (input == _alloysDictionary.Count)
                     break;
+                if(input < 0)
+                    continue;
                 
                 var choice = _alloysDictionary.ElementAt(input).Value;
                 choice();
             }
         }
 
-        private static void Base(string name, List<Tuple<string, int>> alloyComp, IReadOnlyList<Tuple<int, int>> limit)
+        private void Base(string name, List<Tuple<string, int>> alloyComp, IReadOnlyList<Tuple<int, int>> limit)
         {
             var table = new Table()
                 .AddHeader(name)
@@ -126,7 +128,7 @@ namespace TerraFirmaConsole
             
         }
 
-        private static void Validate(IReadOnlyCollection<float> component, IReadOnlyList<Tuple<int, int>> limit)
+        private void Validate(IReadOnlyCollection<float> component, IReadOnlyList<Tuple<int, int>> limit)
         {
             if (component.Any(tuple => tuple == 0f))
             {
@@ -157,7 +159,7 @@ namespace TerraFirmaConsole
 
         #region Metals
 
-        private static void BismuthBronze()
+        private  void BismuthBronze()
         {
             var alloyComp = new List<Tuple<string, int>>
             {
@@ -176,7 +178,7 @@ namespace TerraFirmaConsole
             Base("Bismuth Bronze", alloyComp, limit);
         }
         
-        private static void Bronze()
+        private void Bronze()
         {
             var alloyComp = new List<Tuple<string, int>>
             {
@@ -193,7 +195,7 @@ namespace TerraFirmaConsole
             Base("Bronze", alloyComp, limit);
         }
         
-        private static void BlackBronze()
+        private void BlackBronze()
         {
             var alloyComp = new List<Tuple<string, int>>
             {
@@ -212,7 +214,7 @@ namespace TerraFirmaConsole
             Base("Black Bronze", alloyComp, limit);
         }
         
-        private static void Brass()
+        private void Brass()
         {
             var alloyComp = new List<Tuple<string, int>>
             {
@@ -229,7 +231,7 @@ namespace TerraFirmaConsole
             Base("Brass", alloyComp, limit);
         }
         
-        private static void RoseGold()
+        private void RoseGold()
         {
             var alloyComp = new List<Tuple<string, int>>
             {
@@ -246,7 +248,7 @@ namespace TerraFirmaConsole
             Base("Rose Gold", alloyComp, limit);
         }
         
-        private static void SterlingSilver()
+        private void SterlingSilver()
         {
             var alloyComp = new List<Tuple<string, int>>
             {
@@ -263,7 +265,7 @@ namespace TerraFirmaConsole
             Base("Sterling Silver", alloyComp, limit);
         }
         
-        private static void WeakSteel()
+        private void WeakSteel()
         {
             var alloyComp = new List<Tuple<string, int>>
             {
@@ -282,7 +284,7 @@ namespace TerraFirmaConsole
             Base("Weak Steel", alloyComp, limit);
         }
         
-        private static void WeakBlueSteel()
+        private void WeakBlueSteel()
         {
             var alloyComp = new List<Tuple<string, int>>
             {
@@ -303,7 +305,7 @@ namespace TerraFirmaConsole
             Base("Weak Blue Steel", alloyComp, limit);
         }
         
-        private static void WeakRedSteel()
+        private void WeakRedSteel()
         {
             var alloyComp = new List<Tuple<string, int>>
             {

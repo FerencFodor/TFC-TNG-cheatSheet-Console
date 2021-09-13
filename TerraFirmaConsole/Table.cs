@@ -1,26 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace TerraFirmaConsole
 {
     public class Table
     {
-        public static readonly char[] Box =
-        {
-            '\u2500', //─
-            '\u2502', //│
-            '\u250C', //┌
-            '\u2510', //┐
-            '\u2514', //└
-            '\u2518', //┘
-            '\u251C', //├
-            '\u2524', //┤
-            '\u252C', //┬
-            '\u2534', //┴
-            '\u253C'  //┼
-        };
+        
         
         private int CellSize { get; set; }
         private int Row { get; set; }
@@ -31,6 +20,7 @@ namespace TerraFirmaConsole
 
         public Table()
         {
+            
             CellSize = 7; 
             Columns = new List<int>();
             TableList = new List<List<string>>();
@@ -107,6 +97,27 @@ namespace TerraFirmaConsole
             return this;
         }
 
+        private string HorizontalLine(bool header = false, bool isMiddle = false)
+        {
+            var table = string.Empty;
+
+            var firstChar = (char) (header ? Border.CornerUpRight : isMiddle ? Border.SplitVerticalRight : Border.CornerDownRight);
+            var spacerChar = (char) (header ? Border.HorizontalLine : isMiddle ? Border.Cross : Border.SplitHorizontalUp);
+            var lastChar = (char) (header ? Border.CornerUpLeft : isMiddle ? Border.SplitVerticalLeft : Border.CornerDownLeft);
+            
+            table+=firstChar;
+            
+            Columns.ForEach(column =>
+            {
+                table+=Enumerable.Repeat((char)Border.HorizontalLine, column).ToString();
+                table+=spacerChar;
+            });
+
+            table = table.Remove(table.Length - 1, 1) + lastChar;
+
+            return table;
+        }
+
         public string Build()
         {
             var table = new StringBuilder();
@@ -114,19 +125,11 @@ namespace TerraFirmaConsole
             if (Header != null)
             {
                 //+====+
-                table.Append(Box[2]);
-                
-                foreach (var column in Columns)
-                {
-                    for (var i = 0; i < column; i++)
-                        table.Append(Box[0]);
-                    table.Append(Box[0]);
-                }
-                table[^1] = Box[3];
+                table.Append(HorizontalLine(true));
                 table.Append('\n');
                 
                 //| Header |
-                table.Append(Box[1]);
+                table.Append((char)Border.VerticalLine);
                 
                 var space = Columns.Sum() + Column - 1 - Header.Length;
                 var remainder = space % 2;
@@ -135,7 +138,7 @@ namespace TerraFirmaConsole
                 for (var i = 0; i < space - remainder; i++)
                     table.Append(' ');
                 
-                table.Append(Box[1]);
+                table.Append((char)Border.VerticalLine);
                 table.Append('\n');
             }
             // +===T===T===+
@@ -146,34 +149,34 @@ namespace TerraFirmaConsole
 
                 if (Header != null)
                 {
-                    table.Append(Box[6]);
+                    table.Append(Border.SplitVerticalRight);
                 }
                 else if (j == 0)
                 {
-                    table.Append(Box[2]);
+                    table.Append(Border.CornerUpRight);
                 }
 
                 foreach (var column in Columns)
                 {
                     for (var i = 0; i < column; i++)
-                        table.Append(Box[0]);
-                    table.Append(Header != null && j == 0 ? Box[8] : Box[10]);
+                        table.Append(Border.HorizontalLine);
+                    table.Append(Header != null && j == 0 ? Border.SplitHorizontalDown : Border.Cross);
                 }
 
                 if (Header != null)
                 {
-                    table[^1] = Box[7];
+                    table[^1] = (char) Border.SplitVerticalLeft;
                 }
                 else if (j == 0)
                 {
-                    table[^1] = Box[3];
+                    table[^1] = (char) Border.CornerUpLeft;
                 }
                 
                 table.Append('\n');
                 
                 // | text | text | text |
     
-                table.Append(Box[1]);
+                table.Append((char)Border.VerticalLine);
 
                 for (var i = 0; i < Column; i++)
                 {
@@ -181,7 +184,7 @@ namespace TerraFirmaConsole
                     space = space < 0 ? 0 : space;
                     table.Append(' ');
                     table.Append(rowData[i].PadRight(space+rowData[i].Length));
-                    table.Append(Box[1]);
+                    table.Append((char)Border.VerticalLine);
                 }
 
                 table.Append('\n');
@@ -189,15 +192,15 @@ namespace TerraFirmaConsole
             
             // +===+===+===+
 
-            table.Append(Box[4]);
+            table.Append(Border.CornerDownRight);
             foreach (var column in Columns)
             {
                 for (var i = 0; i < column; i++)
-                    table.Append(Box[0]);
-                table.Append(Box[9]);
+                    table.Append(Border.HorizontalLine);
+                table.Append(Border.SplitHorizontalUp);
             }
 
-            table[^1] = Box[5];
+            table[^1] = (char)Border.CornerDownLeft;
 
             return table.ToString();
         }

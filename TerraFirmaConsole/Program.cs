@@ -5,56 +5,82 @@ using System.Threading;
 
 namespace TerraFirmaConsole
 {
-    class Program
+    internal static class Program
     {
-        private static bool exit = false;
-        
+        private static bool _exit;
+
         private static readonly List<ITabs> TabsList = new List<ITabs>();
 
-        private static readonly Dictionary<string, Action> TabsDictionary = new Dictionary<string, Action>()
+        private static readonly Dictionary<string, Action> TabsDictionary = new Dictionary<string, Action>
         {
             {"Alloys", CheckTabsList<Alloys>}
             //{"Crossbreeds", ()=>{}}
             //...
         };
 
-        static void Main(string[] args)
+        private static void Main()
         {
-            Greet();
-            while (true)
+            var rand = new Random();
+            
+            if (true)
             {
-                Menu();
-                if (exit)
-                    break;
-                Console.Clear();
+                var table = new BoxDrawing
+                    {
+                        Height = 3, 
+                        Width = 22
+                    }
+                    .DrawHeader("Bismuth Bronze")
+                    .DrawBox()
+                    .DrawHeader("Boi in dress");
+
+                for (var i = 2; i <= 10; i++)
+                {
+                    switch (rand.Next(0, 2))
+                    {
+                        case 0: table.DrawRow(i); break;
+                        case 1: table.DrawBox(); break;
+                    }
+                }
+                
+                
+                    
+
+                Console.Out.WriteLine(string.Join('\n', table.ValidateDraw()));
+            }
+            else
+            {
+                Greet();
+                while (true)
+                {
+                    Menu();
+                    if (_exit)
+                        break;
+                    Console.Clear();
+                }
             }
         }
 
         private static void Greet()
         {
-             Console.Out.WriteLineAsync(
+            Console.Out.WriteLineAsync(
                 "TerraFirmaCraft: The New Generation\n" +
                 "  TechNodeFirmaCraft modpack Cheat \n" +
-                "===================================\n" + 
+                "===================================\n" +
                 "      Created by: Franklyfied        ");
 
             Thread.Sleep(2000);
             Console.Clear();
         }
-        
-        private static void CheckTabsList<T>() where T: class, new()
+
+        private static void CheckTabsList<T>() where T : class, new()
         {
             var v = new T();
             if (TabsList.Any(i => i.GetType() == v.GetType()))
-            {
                 v = TabsList.Find(i => i.GetType() == v.GetType()) as T;
-            }
             else
-            {
                 TabsList.Add(v as ITabs);
-            }
-            ((ITabs) v)?.Menu();
 
+            ((ITabs) v)?.Menu();
         }
 
         private static void Menu()
@@ -77,14 +103,15 @@ namespace TerraFirmaConsole
             Console.Out.Write("Choose: ");
 
             var input = GetInput();
-            
+
             if (input < 0)
                 return;
             if (input == TabsDictionary.Count)
             {
-                exit = true;
+                _exit = true;
                 return;
             }
+
             ChangePage(input);
         }
 
@@ -105,7 +132,7 @@ namespace TerraFirmaConsole
                 return -1;
             }
 
-            if (page >= TabsDictionary.Count+1 || page < 0)
+            if (page >= TabsDictionary.Count + 1 || page < 0)
             {
                 Console.Out.WriteLine("Choice out of bounds");
                 return -1;
